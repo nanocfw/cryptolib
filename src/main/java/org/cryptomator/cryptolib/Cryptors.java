@@ -10,12 +10,9 @@ package org.cryptomator.cryptolib;
 
 import java.security.SecureRandom;
 
-import org.cryptomator.cryptolib.api.Cryptor;
-import org.cryptomator.cryptolib.api.CryptorProvider;
-import org.cryptomator.cryptolib.api.FileHeader;
-import org.cryptomator.cryptolib.api.InvalidPassphraseException;
-import org.cryptomator.cryptolib.api.KeyFile;
+import org.cryptomator.cryptolib.api.*;
 import org.cryptomator.cryptolib.common.ReseedingSecureRandom;
+import org.cryptomator.cryptolib.sgx.SgxCryptorProviderImpl;
 import org.cryptomator.cryptolib.v1.CryptorProviderImpl;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,6 +26,11 @@ public final class Cryptors {
 	public static CryptorProvider version1(SecureRandom seeder) {
 		SecureRandom csprng = ReseedingSecureRandom.create(seeder);
 		return new CryptorProviderImpl(csprng);
+	}
+
+	public static CryptorProvider sgx()
+	{
+		return new SgxCryptorProviderImpl();
 	}
 
 	/**

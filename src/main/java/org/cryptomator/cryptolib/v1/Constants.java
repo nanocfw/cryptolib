@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.cryptomator.cryptolib.v1;
 
-final class Constants {
+public final class Constants {
 
 	static final String ENC_ALG = "AES";
 	static final String MAC_ALG = "HmacSHA256";
