@@ -14,8 +14,7 @@ public class FileNameSgxCryptorImpl implements FileNameCryptor {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final BaseEncoding BASE32 = BaseEncoding.base32();
 
-    FileNameSgxCryptorImpl(SgxJNI sgxLib)
-    {
+    FileNameSgxCryptorImpl(SgxJNI sgxLib) {
         FSgxLib = sgxLib;
     }
 
@@ -29,14 +28,24 @@ public class FileNameSgxCryptorImpl implements FileNameCryptor {
 
     @Override
     public String encryptFilename(String cleartextName, byte[]... associatedData) {
+        return encryptFilename(BASE32, cleartextName, associatedData);
+    }
+
+    @Override
+    public String encryptFilename(BaseEncoding encoding, String cleartextName, byte[]... associatedData) {
         byte[] cleartextBytes = cleartextName.getBytes(UTF_8);
         byte[] encryptedBytes = FSgxLib.SgxEncryptBytes(cleartextBytes);
-        return BASE32.encode(encryptedBytes);
+        return encoding.encode(encryptedBytes);
     }
 
     @Override
     public String decryptFilename(String ciphertextName, byte[]... associatedData) throws AuthenticationFailedException {
-        byte[] encryptedBytes = BASE32.decode(ciphertextName);
+        return decryptFilename(BASE32, ciphertextName, associatedData);
+    }
+
+    @Override
+    public String decryptFilename(BaseEncoding encoding, String ciphertextName, byte[]... associatedData) throws AuthenticationFailedException {
+        byte[] encryptedBytes = encoding.decode(ciphertextName);
         byte[] cleartextBytes = FSgxLib.SgxDecryptBytes(encryptedBytes);
         return new String(cleartextBytes, UTF_8);
     }
