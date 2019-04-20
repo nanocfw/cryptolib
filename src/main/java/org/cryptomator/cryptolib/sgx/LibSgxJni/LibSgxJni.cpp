@@ -28,6 +28,18 @@ static __inline void native_cpuid(unsigned int *eax, unsigned int *ebx, unsigned
 #endif
 }
 
+jbyteArray as_byte_array(JNIEnv *env, byte* buf, int len) {
+    jbyteArray array = env->NewByteArray (len);
+    env->SetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+    return array;
+}
+
+byte* as_byte(JNIEnv *env, jbyteArray array, int len) {
+    byte *buf = new byte[len];
+    env->GetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+    return buf;
+}
+
 JNIEXPORT jboolean
 
 JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1is_1enabled(JNIEnv *env, jobject obj) {
@@ -78,35 +90,35 @@ Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1destroy_1enclave(JNIEnv *env
 JNIEXPORT jbyteArray
 
 JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1seal_1data(JNIEnv *env, jobject obj, jlong enclave_id,
-                                                                       jbyteArray data_in, jlong data_size) {
+                                                                       jbyteArray data_in) {
     byte *data;
     byte *sealed_data;
+    int data_size;
     uint32_t sealed_data_size;
     sgx_status_t ret = SGX_ERROR_UNEXPECTED;
 
     jbyteArray
-    data_out;
-    std::cout << "JNI_seal_1\n";
+            data_out;
+
     try {
-        env->GetByteArrayRegion(data_in, 0, data_size, reinterpret_cast<jbyte *>(data));
-        std::cout << "JNI_seal_2\n";
+        data_size = env->GetArrayLength(data_in);
+        data = as_byte(env, data_in, data_size);
+
         ret = ecall_get_sealed_data_size((sgx_enclave_id_t) enclave_id, data_size, &sealed_data_size);
-        std::cout << "JNI_seal_3\n";
+
         if (ret != SGX_SUCCESS)
             return NULL;
 
         sealed_data = (byte *) malloc(sealed_data_size);
-        std::cout << "JNI_seal_4\n";
+
         ret = ecall_seal_data((sgx_enclave_id_t) enclave_id, data, data_size, sealed_data, sealed_data_size);
 
         //free(data);
-        std::cout << "JNI_seal_5\n";
-        data_out = env->NewByteArray(sealed_data_size);
-        std::cout << "JNI_seal_6\n";
-        env->SetByteArrayRegion(data_out, 0, sealed_data_size, reinterpret_cast<jbyte *>(sealed_data));
+
+        data_out = as_byte_array(env, sealed_data, sealed_data_size);
 
         free(sealed_data);
-        std::cout << "JNI_seal_7\n";
+
         return data_out;
     } catch (const std::exception &e) {
         std::cout << "Exception Seal Data \"" << e.what() << "\"\n";
@@ -117,35 +129,35 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1seal_1data(JNIEnv *e
 JNIEXPORT jbyteArray
 
 JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1unseal_1data(JNIEnv *env, jobject obj, jlong enclave_id,
-                                                                         jbyteArray data_in, jlong data_size) {
+                                                                         jbyteArray data_in) {
     byte *data;
     byte *unsealed_data;
+    int data_size;
     uint32_t unsealed_data_size;
     sgx_status_t ret = SGX_ERROR_UNEXPECTED;
 
     jbyteArray
-    data_out;
-    std::cout << "JNI_unseal_1\n";
+            data_out;
+
     try {
-        env->GetByteArrayRegion(data_in, 0, data_size, reinterpret_cast<jbyte *>(data));
-        std::cout << "JNI_unseal_2\n";
+        data_size = env->GetArrayLength(data_in);
+        data = as_byte(env, data_in, data_size);
+
         ret = ecall_get_unsealed_data_size((sgx_enclave_id_t) enclave_id, data, data_size, &unsealed_data_size);
-        std::cout << "JNI_unseal_3\n";
+
         if (ret != SGX_SUCCESS)
             return NULL;
 
         unsealed_data = (byte *) malloc(unsealed_data_size);
-        std::cout << "JNI_unseal_4\n";
+
         ret = ecall_unseal_data((sgx_enclave_id_t) enclave_id, data, data_size, unsealed_data, unsealed_data_size);
 
         //free(data);
-        std::cout << "JNI_unseal_5\n";
-        data_out = env->NewByteArray(unsealed_data_size);
-        std::cout << "JNI_unseal_6\n";
-        env->SetByteArrayRegion(data_out, 0, unsealed_data_size, reinterpret_cast<jbyte *>(unsealed_data));
+
+        data_out = as_byte_array(env, unsealed_data, unsealed_data_size);
 
         free(unsealed_data);
-        std::cout << "JNI_unseal_7\n";
+
         return data_out;
     } catch (const std::exception &e) {
         std::cout << "Exception Unseal Data: \"" << e.what() << "\"\n";

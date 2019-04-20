@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/cmake-build-debug",
+  "command": "/usr/bin/cc  -I/usr/lib/jvm/java-11-oracle/include -I/usr/lib/jvm/java-11-oracle/include/linux -I/home/storage/Documentos/linux-sgx/linux/installer/bin/sgxsdk/include -I/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/.   -DDEBUG -UNDEBUG -UEDEBUG -g   -o CMakeFiles/LibSgxJni.dir/Enclave_u.c.o   -c /home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/Enclave_u.c",
+  "file": "/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/Enclave_u.c"
+},
+{
+  "directory": "/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/cmake-build-debug",
+  "command": "/usr/bin/c++   -I/usr/lib/jvm/java-11-oracle/include -I/usr/lib/jvm/java-11-oracle/include/linux -I/home/storage/Documentos/linux-sgx/linux/installer/bin/sgxsdk/include -I/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/.  -g   -std=gnu++14 -o CMakeFiles/LibSgxJni.dir/LibSgxJni.cpp.o -c /home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/LibSgxJni.cpp",
+  "file": "/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/LibSgxJni.cpp"
+}
+]

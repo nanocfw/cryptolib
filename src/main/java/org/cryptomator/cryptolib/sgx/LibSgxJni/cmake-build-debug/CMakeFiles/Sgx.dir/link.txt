@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libSgx.so -o /usr/lib/libSgx.so CMakeFiles/Sgx.dir/Enclave_u.c.o CMakeFiles/Sgx.dir/LibSgxJni.cpp.o 

@@ -34,7 +34,9 @@ public class SgxJNI {
     }
 
     public byte[] SgxEncryptBytes(byte[] data) {
-        return jni_sgx_seal_data(FEnclaveID, data, data.length);
+        if (data.length == 0)
+            return new byte[]{};
+        return jni_sgx_seal_data(FEnclaveID, data);
     }
 
     public ByteBuffer SgxEncryptData(ByteBuffer buffIn) {
@@ -42,7 +44,7 @@ public class SgxJNI {
         byte[] data = new byte[dataLength];
         buffIn.get(data, 0, dataLength);
 
-        byte[] encData = SgxEncryptBytes(data);
+        byte[] encData = this.SgxEncryptBytes(data);
 
         ByteBuffer result = ByteBuffer.allocate(encData.length);
         result.wrap(encData);
@@ -50,7 +52,10 @@ public class SgxJNI {
     }
 
     public byte[] SgxDecryptBytes(byte[] data) {
-        return jni_sgx_unseal_data(FEnclaveID, data, data.length);
+        if (data.length == 0)
+            return new byte[]{};
+
+        return jni_sgx_unseal_data(FEnclaveID, data);
     }
 
     public ByteBuffer SgxDecryptData(ByteBuffer buffIn) {
@@ -58,7 +63,7 @@ public class SgxJNI {
         byte[] data = new byte[dataLength];
         buffIn.get(data, 0, dataLength);
 
-        byte[] encData = SgxDecryptBytes(data);
+        byte[] encData = this.SgxDecryptBytes(data);
 
         ByteBuffer result = ByteBuffer.allocate(encData.length);
         result.wrap(encData);
@@ -77,14 +82,13 @@ public class SgxJNI {
             System.out.println(e);
         }
     }
-
     private native boolean jni_sgx_is_enabled();
 
     private native int jni_initialize_enclave();
 
-    private native byte[] jni_sgx_seal_data(long enclave_id, byte[] data_in, long data_size);
+    private native byte[] jni_sgx_seal_data(long enclave_id, byte[] data_in);
 
-    private native byte[] jni_sgx_unseal_data(long enclave_id, byte[] data_in, long data_size);
+    private native byte[] jni_sgx_unseal_data(long enclave_id, byte[] data_in);
 
     private native int jni_sgx_destroy_enclave(long enclave_id);
 }

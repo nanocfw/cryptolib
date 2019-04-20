@@ -45,7 +45,7 @@ JNIEXPORT jint JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1initialize
  * Signature: (J[BI)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1seal_1data
-  (JNIEnv *env, jobject obj, jlong enclave_id, jbyteArray data_in, jlong data_size);
+  (JNIEnv *env, jobject obj, jlong enclave_id, jbyteArray data_in);
 
 /*
  * Class:     org_cryptomator_cryptolib_sgx_SgxJNI
@@ -53,7 +53,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_
  * Signature: (J[BI)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1unseal_1data
-  (JNIEnv *env, jobject obj, jlong enclave_id, jbyteArray data_in, jlong data_size);
+  (JNIEnv *env, jobject obj, jlong enclave_id, jbyteArray data_in);
 
 /*
  * Class:     org_cryptomator_cryptolib_sgx_SgxJNI

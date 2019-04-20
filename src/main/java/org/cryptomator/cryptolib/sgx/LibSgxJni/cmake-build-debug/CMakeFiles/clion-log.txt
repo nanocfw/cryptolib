@@ -1,1 +1,4 @@
-CMakeLists.txt not found in /home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni Select CMakeLists.txt file...
+/home/storage/Documentos/clion-2018.3.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/LibSgxJni/cmake-build-debug
