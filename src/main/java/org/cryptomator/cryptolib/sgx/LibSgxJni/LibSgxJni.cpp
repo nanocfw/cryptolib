@@ -76,7 +76,7 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1initialize_1enclave(JNIEn
 
         env->SetLongField(obj, fidenclave, jid);
     }
-    return (long) ret;
+    return (int) ret;
 }
 
 JNIEXPORT jint
@@ -84,7 +84,7 @@ JNIEXPORT jint
 JNICALL
 Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1destroy_1enclave(JNIEnv *env, jobject obj, jlong enclave_id) {
     sgx_status_t ret = sgx_destroy_enclave((sgx_enclave_id_t) enclave_id);
-    return (long) ret;
+    return (int) ret;
 }
 
 JNIEXPORT jbyteArray
@@ -113,7 +113,7 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1seal_1data(JNIEnv *e
 
         ret = ecall_seal_data((sgx_enclave_id_t) enclave_id, data, data_size, sealed_data, sealed_data_size);
 
-        //free(data);
+        free(data);
 
         data_out = as_byte_array(env, sealed_data, sealed_data_size);
 
@@ -152,7 +152,7 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1unseal_1data(JNIEnv 
 
         ret = ecall_unseal_data((sgx_enclave_id_t) enclave_id, data, data_size, unsealed_data, unsealed_data_size);
 
-        //free(data);
+        free(data);
 
         data_out = as_byte_array(env, unsealed_data, unsealed_data_size);
 

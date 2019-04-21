@@ -1,3 +1,0 @@
-/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/untitled/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/untitled/cmake-build-debug/CMakeFiles/untitled.dir
-/home/storage/Documentos/cryptolib/src/main/java/org/cryptomator/cryptolib/sgx/untitled/cmake-build-debug/CMakeFiles/edit_cache.dir

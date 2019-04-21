@@ -21,7 +21,7 @@ import org.cryptomator.siv.UnauthenticCiphertextException;
 
 import com.google.common.io.BaseEncoding;
 
-class FileNameCryptorImpl implements FileNameCryptor {
+public class FileNameCryptorImpl implements FileNameCryptor {
 
 	private static final Charset UTF_8 = Charset.forName("UTF-8");
 	private static final BaseEncoding BASE32 = BaseEncoding.base32();
@@ -35,7 +35,7 @@ class FileNameCryptorImpl implements FileNameCryptor {
 	private final SecretKey encryptionKey;
 	private final SecretKey macKey;
 
-	FileNameCryptorImpl(SecretKey encryptionKey, SecretKey macKey) {
+	public FileNameCryptorImpl(SecretKey encryptionKey, SecretKey macKey) {
 		this.encryptionKey = encryptionKey;
 		this.macKey = macKey;
 	}

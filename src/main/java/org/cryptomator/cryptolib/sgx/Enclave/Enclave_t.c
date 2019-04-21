@@ -22,6 +22,10 @@
 		return SGX_ERROR_INVALID_PARAMETER;\
 } while (0)
 
+#define ADD_ASSIGN_OVERFLOW(a, b) (	\
+	((a) += (b)) < (b)	\
+)
+
 
 typedef struct ms_ecall_get_sealed_data_size_t {
 	uint32_t ms_data_size;
@@ -69,6 +73,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_get_sealed_data_size(void* pms)
 	sgx_lfence();
 
 	if (_tmp_sealed_data_size != NULL && _len_sealed_data_size != 0) {
+		if ( _len_sealed_data_size % sizeof(*_tmp_sealed_data_size) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		if ((_in_sealed_data_size = (uint32_t*)malloc(_len_sealed_data_size)) == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
 			goto err;
@@ -78,14 +87,15 @@ static sgx_status_t SGX_CDECL sgx_ecall_get_sealed_data_size(void* pms)
 	}
 
 	ecall_get_sealed_data_size(ms->ms_data_size, _in_sealed_data_size);
-err:
 	if (_in_sealed_data_size) {
 		if (memcpy_s(_tmp_sealed_data_size, _len_sealed_data_size, _in_sealed_data_size, _len_sealed_data_size)) {
 			status = SGX_ERROR_UNEXPECTED;
+			goto err;
 		}
-		free(_in_sealed_data_size);
 	}
 
+err:
+	if (_in_sealed_data_size) free(_in_sealed_data_size);
 	return status;
 }
 
@@ -116,6 +126,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_seal_data(void* pms)
 	sgx_lfence();
 
 	if (_tmp_data != NULL && _len_data != 0) {
+		if ( _len_data % sizeof(*_tmp_data) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		_in_data = (uint8_t*)malloc(_len_data);
 		if (_in_data == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -129,6 +144,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_seal_data(void* pms)
 
 	}
 	if (_tmp_sealed_data != NULL && _len_sealed_data != 0) {
+		if ( _len_sealed_data % sizeof(*_tmp_sealed_data) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		if ((_in_sealed_data = (uint8_t*)malloc(_len_sealed_data)) == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
 			goto err;
@@ -138,15 +158,16 @@ static sgx_status_t SGX_CDECL sgx_ecall_seal_data(void* pms)
 	}
 
 	ecall_seal_data(_in_data, _tmp_data_size, _in_sealed_data, _tmp_sealed_data_size);
-err:
-	if (_in_data) free(_in_data);
 	if (_in_sealed_data) {
 		if (memcpy_s(_tmp_sealed_data, _len_sealed_data, _in_sealed_data, _len_sealed_data)) {
 			status = SGX_ERROR_UNEXPECTED;
+			goto err;
 		}
-		free(_in_sealed_data);
 	}
 
+err:
+	if (_in_data) free(_in_data);
+	if (_in_sealed_data) free(_in_sealed_data);
 	return status;
 }
 
@@ -176,6 +197,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_get_unsealed_data_size(void* pms)
 	sgx_lfence();
 
 	if (_tmp_sealed_data != NULL && _len_sealed_data != 0) {
+		if ( _len_sealed_data % sizeof(*_tmp_sealed_data) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		_in_sealed_data = (uint8_t*)malloc(_len_sealed_data);
 		if (_in_sealed_data == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -189,6 +215,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_get_unsealed_data_size(void* pms)
 
 	}
 	if (_tmp_unsealed_data_size != NULL && _len_unsealed_data_size != 0) {
+		if ( _len_unsealed_data_size % sizeof(*_tmp_unsealed_data_size) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		if ((_in_unsealed_data_size = (uint32_t*)malloc(_len_unsealed_data_size)) == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
 			goto err;
@@ -198,15 +229,16 @@ static sgx_status_t SGX_CDECL sgx_ecall_get_unsealed_data_size(void* pms)
 	}
 
 	ecall_get_unsealed_data_size(_in_sealed_data, _tmp_sealed_data_size, _in_unsealed_data_size);
-err:
-	if (_in_sealed_data) free(_in_sealed_data);
 	if (_in_unsealed_data_size) {
 		if (memcpy_s(_tmp_unsealed_data_size, _len_unsealed_data_size, _in_unsealed_data_size, _len_unsealed_data_size)) {
 			status = SGX_ERROR_UNEXPECTED;
+			goto err;
 		}
-		free(_in_unsealed_data_size);
 	}
 
+err:
+	if (_in_sealed_data) free(_in_sealed_data);
+	if (_in_unsealed_data_size) free(_in_unsealed_data_size);
 	return status;
 }
 
@@ -237,6 +269,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_unseal_data(void* pms)
 	sgx_lfence();
 
 	if (_tmp_sealed_data != NULL && _len_sealed_data != 0) {
+		if ( _len_sealed_data % sizeof(*_tmp_sealed_data) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		_in_sealed_data = (uint8_t*)malloc(_len_sealed_data);
 		if (_in_sealed_data == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -250,6 +287,11 @@ static sgx_status_t SGX_CDECL sgx_ecall_unseal_data(void* pms)
 
 	}
 	if (_tmp_unsealed_data != NULL && _len_unsealed_data != 0) {
+		if ( _len_unsealed_data % sizeof(*_tmp_unsealed_data) != 0)
+		{
+			status = SGX_ERROR_INVALID_PARAMETER;
+			goto err;
+		}
 		if ((_in_unsealed_data = (uint8_t*)malloc(_len_unsealed_data)) == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
 			goto err;
@@ -259,15 +301,16 @@ static sgx_status_t SGX_CDECL sgx_ecall_unseal_data(void* pms)
 	}
 
 	ecall_unseal_data(_in_sealed_data, _tmp_sealed_data_size, _in_unsealed_data, _tmp_unsealed_data_size);
-err:
-	if (_in_sealed_data) free(_in_sealed_data);
 	if (_in_unsealed_data) {
 		if (memcpy_s(_tmp_unsealed_data, _len_unsealed_data, _in_unsealed_data, _len_unsealed_data)) {
 			status = SGX_ERROR_UNEXPECTED;
+			goto err;
 		}
-		free(_in_unsealed_data);
 	}
 
+err:
+	if (_in_sealed_data) free(_in_sealed_data);
+	if (_in_unsealed_data) free(_in_unsealed_data);
 	return status;
 }
 

@@ -4,17 +4,16 @@ import com.google.common.io.BaseEncoding;
 import org.cryptomator.cryptolib.api.AuthenticationFailedException;
 import org.cryptomator.cryptolib.api.FileNameCryptor;
 import org.cryptomator.cryptolib.common.MessageDigestSupplier;
-import org.cryptomator.cryptolib.sgx.SgxJNI;
 
 import java.nio.charset.Charset;
 
-public class FileNameSgxCryptorImpl implements FileNameCryptor {
+public class FileNameSgxCryptorImpl_old implements FileNameCryptor {
 
     private final SgxJNI FSgxLib;
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final BaseEncoding BASE32 = BaseEncoding.base32();
 
-    FileNameSgxCryptorImpl(SgxJNI sgxLib) {
+    FileNameSgxCryptorImpl_old(SgxJNI sgxLib) {
         FSgxLib = sgxLib;
     }
 
@@ -34,7 +33,7 @@ public class FileNameSgxCryptorImpl implements FileNameCryptor {
     @Override
     public String encryptFilename(BaseEncoding encoding, String cleartextName, byte[]... associatedData) {
         byte[] cleartextBytes = cleartextName.getBytes(UTF_8);
-        byte[] encryptedBytes = FSgxLib.SgxEncryptBytes(cleartextBytes);
+        byte[] encryptedBytes = cleartextBytes; //FSgxLib.SgxEncryptBytes(cleartextBytes);
         return encoding.encode(encryptedBytes);
     }
 
@@ -46,7 +45,7 @@ public class FileNameSgxCryptorImpl implements FileNameCryptor {
     @Override
     public String decryptFilename(BaseEncoding encoding, String ciphertextName, byte[]... associatedData) throws AuthenticationFailedException {
         byte[] encryptedBytes = encoding.decode(ciphertextName);
-        byte[] cleartextBytes = FSgxLib.SgxDecryptBytes(encryptedBytes);
+        byte[] cleartextBytes = encryptedBytes;//FSgxLib.SgxDecryptBytes(encryptedBytes);
         return new String(cleartextBytes, UTF_8);
     }
 }

@@ -28,9 +28,10 @@ public final class Cryptors {
 		return new CryptorProviderImpl(csprng);
 	}
 
-	public static CryptorProvider sgx()
+	public static CryptorProvider sgx(SecureRandom seeder)
 	{
-		return new SgxCryptorProviderImpl();
+		SecureRandom csprng = ReseedingSecureRandom.create(seeder);
+		return new SgxCryptorProviderImpl(csprng);
 	}
 
 	/**
