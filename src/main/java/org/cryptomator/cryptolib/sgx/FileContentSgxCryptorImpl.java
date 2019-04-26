@@ -3,7 +3,6 @@ package org.cryptomator.cryptolib.sgx;
 import org.cryptomator.cryptolib.api.AuthenticationFailedException;
 import org.cryptomator.cryptolib.api.FileContentCryptor;
 import org.cryptomator.cryptolib.api.FileHeader;
-import org.cryptomator.cryptolib.sgx.SgxJNI;
 
 import java.nio.ByteBuffer;
 
@@ -32,8 +31,8 @@ public class FileContentSgxCryptorImpl implements FileContentCryptor {
         if (cleartextChunk.remaining() == 0 || cleartextChunk.remaining() > SGX_PAYLOAD_SIZE)
             throw new IllegalArgumentException("Invalid chunk");
 
-
-        return FSgxLib.SgxEncryptData(cleartextChunk);
+        ByteBuffer out = FSgxLib.SgxEncryptData(cleartextChunk);
+        return out;
     }
 
     @Override
@@ -41,6 +40,7 @@ public class FileContentSgxCryptorImpl implements FileContentCryptor {
         if (ciphertextChunk.remaining() < SGX_ADD_BYTES || ciphertextChunk.remaining() > SGX_CHUNK_SIZE)
             throw new IllegalArgumentException("Invalid chunk size: " + ciphertextChunk.remaining() + ", expected range [" + (SGX_ADD_BYTES) + ", " + SGX_CHUNK_SIZE + "]");
 
-        return FSgxLib.SgxDecryptData(ciphertextChunk);
+        ByteBuffer out = FSgxLib.SgxDecryptData(ciphertextChunk);
+        return out;
     }
 }

@@ -35,7 +35,7 @@ public class SgxCryptorImpl implements Cryptor {
         this.random = random;
         this.sgxLib = new SgxJNI();
         this.sgxLib.InitializeEnclave();
-        this.fileHeaderCryptor = new FileHeaderSgxCryptorImpl(sgxLib);
+        this.fileHeaderCryptor = new FileHeaderSgxCryptorImpl();
         this.fileContentCryptor = new FileContentSgxCryptorImpl(sgxLib);
         this.fileNameCryptor = new FileNameCryptorImpl(encKey, macKey);
     }

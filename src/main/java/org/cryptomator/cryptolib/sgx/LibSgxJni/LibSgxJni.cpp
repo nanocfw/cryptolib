@@ -28,15 +28,15 @@ static __inline void native_cpuid(unsigned int *eax, unsigned int *ebx, unsigned
 #endif
 }
 
-jbyteArray as_byte_array(JNIEnv *env, byte* buf, int len) {
-    jbyteArray array = env->NewByteArray (len);
-    env->SetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+jbyteArray as_byte_array(JNIEnv *env, byte *buf, int len) {
+    jbyteArray array = env->NewByteArray(len);
+    env->SetByteArrayRegion(array, 0, len, reinterpret_cast<jbyte *>(buf));
     return array;
 }
 
-byte* as_byte(JNIEnv *env, jbyteArray array, int len) {
+byte *as_byte(JNIEnv *env, jbyteArray array, int len) {
     byte *buf = new byte[len];
-    env->GetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+    env->GetByteArrayRegion(array, 0, len, reinterpret_cast<jbyte *>(buf));
     return buf;
 }
 
@@ -108,12 +108,18 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1seal_1data(JNIEnv *e
 
         if (ret != SGX_SUCCESS)
             return NULL;
+        ret = SGX_ERROR_UNEXPECTED;
 
         sealed_data = (byte *) malloc(sealed_data_size);
 
         ret = ecall_seal_data((sgx_enclave_id_t) enclave_id, data, data_size, sealed_data, sealed_data_size);
 
         free(data);
+
+        std::cout << "Seal data\nUnsealed Data Len:" << data_size << "\nSGX status: " << ret << "\n";
+
+        if (ret != SGX_SUCCESS)
+            return NULL;
 
         data_out = as_byte_array(env, sealed_data, sealed_data_size);
 
@@ -145,6 +151,11 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1unseal_1data(JNIEnv 
 
         ret = ecall_get_unsealed_data_size((sgx_enclave_id_t) enclave_id, data, data_size, &unsealed_data_size);
 
+        if (unsealed_data_size < 1) {
+            std::cout << "Não foi possível calcular o tamanho dos dados a serem deselados.\n";
+            return NULL;
+        }
+
         if (ret != SGX_SUCCESS)
             return NULL;
 
@@ -153,6 +164,11 @@ JNICALL Java_org_cryptomator_cryptolib_sgx_SgxJNI_jni_1sgx_1unseal_1data(JNIEnv 
         ret = ecall_unseal_data((sgx_enclave_id_t) enclave_id, data, data_size, unsealed_data, unsealed_data_size);
 
         free(data);
+
+        std::cout << "Unseal data\nSealed Data Len:" << data_size << "\nSGX status: " << ret << "\n";
+
+        if (ret != SGX_SUCCESS)
+            return NULL;
 
         data_out = as_byte_array(env, unsealed_data, unsealed_data_size);
 

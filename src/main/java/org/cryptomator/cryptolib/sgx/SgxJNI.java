@@ -31,6 +31,15 @@ public class SgxJNI {
             throw new ExceptionInInitializerError("Erro ao inicializar o enclave: " + System.lineSeparator() +
                     "Código: " + SgxStatus.toHex(ret) + " - " +
                     "Descrição: " + SgxStatus.fromInt(ret).getDescription());
+
+        String teste = "HelloWorld!";
+        byte[] b = teste.getBytes();
+        ByteBuffer bf = ByteBuffer.wrap(b);
+        bf = SgxEncryptData(bf);
+        bf = SgxDecryptData(bf);
+        String teste2 = new String(bf.array());
+        if (!teste2.equals(teste))
+            throw new ExceptionInInitializerError("Erro ao selar/deselar os dados");
     }
 
     public byte[] SgxEncryptBytes(byte[] data) {
@@ -42,12 +51,11 @@ public class SgxJNI {
     public ByteBuffer SgxEncryptData(ByteBuffer buffIn) {
         int dataLength = buffIn.remaining();
         byte[] data = new byte[dataLength];
-        buffIn.get(data, 0, dataLength);
+        buffIn.get(data, buffIn.position(), dataLength);
 
         byte[] encData = this.SgxEncryptBytes(data);
 
-        ByteBuffer result = ByteBuffer.allocate(encData.length);
-        result.wrap(encData);
+        ByteBuffer result = ByteBuffer.wrap(encData);
         return result;
     }
 
@@ -61,12 +69,11 @@ public class SgxJNI {
     public ByteBuffer SgxDecryptData(ByteBuffer buffIn) {
         int dataLength = buffIn.remaining();
         byte[] data = new byte[dataLength];
-        buffIn.get(data, 0, dataLength);
+        buffIn.get(data, buffIn.position(), dataLength);
 
         byte[] encData = this.SgxDecryptBytes(data);
 
-        ByteBuffer result = ByteBuffer.allocate(encData.length);
-        result.wrap(encData);
+        ByteBuffer result = ByteBuffer.wrap(encData);
         return result;
     }
 
@@ -82,6 +89,7 @@ public class SgxJNI {
             System.out.println(e);
         }
     }
+
     private native boolean jni_sgx_is_enabled();
 
     private native int jni_initialize_enclave();
